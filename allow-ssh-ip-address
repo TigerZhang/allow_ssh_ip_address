@@ -1,0 +1,20 @@
+#!/bin/bash
+
+#
+# this script will add the
+# remote address to allow list in the iptables
+#
+
+REMOTE_ADDR=$1
+# sed -i '/### Appended by CGI Script Begin/,/### Appended by CGI Script End/{//!d}' /etc/iptables/rules.v4
+# append remote addr to /etc/iptables/rules.v4
+# between:
+### Appended by CGI Script Begin
+### Appended by CGI Script End
+# sed -i '/Line to insert after/ i Line one to insert \
+#        second new line to insert \
+#        third new line to insert' file
+sed -i "/### Appended by CGI Script Begin/a \
+-A INPUT -s $REMOTE_ADDR/32 -p tcp -m tcp --dport 22 -j ACCEPT" /etc/iptables/rules.v4
+
+/etc/init.d/iptables-persistent reload > /dev/null 2>&1
